@@ -5,6 +5,7 @@ import { Exercise } from '@/lib/types';
 import { calculateXPForExercise } from '@/lib/store';
 import { TEST_INPUTS } from '@/lib/chapters';
 import XPToast from './XPToast';
+import { getStoredApiKey } from './ApiKeyModal';
 
 interface ExercisePanelProps {
   exercise: Exercise;
@@ -61,10 +62,16 @@ export default function ExercisePanel({
           prompt: substituted,
           systemPrompt: substitutedSystem || undefined,
           prefill: substitutedPrefill || undefined,
+          apiKey: getStoredApiKey() || undefined,
         }),
       });
 
       const data = await res.json();
+      if (data.error === 'NO_API_KEY') {
+        setError('⚠️ ' + data.message);
+        setLoading(false);
+        return;
+      }
       if (data.error) {
         setError(data.error);
         setLoading(false);
