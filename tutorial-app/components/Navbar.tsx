@@ -5,15 +5,18 @@ import Link from 'next/link';
 import { useProgress } from './ProgressProvider';
 import XPBar from './XPBar';
 import { CHAPTERS } from '@/lib/chapters';
-import ApiKeyModal, { getStoredApiKey } from './ApiKeyModal';
+import ApiKeyModal from './ApiKeyModal';
+import { hasConfiguredProvider, getActiveProvider } from '@/lib/providerStore';
 
 export default function Navbar() {
   const { progress } = useProgress();
   const [showApiKey, setShowApiKey] = useState(false);
   const [hasKey, setHasKey] = useState(false);
+  const [activeProvider, setActiveProvider] = useState<'groq' | 'anthropic'>('groq');
 
   useEffect(() => {
-    setHasKey(!!getStoredApiKey());
+    setHasKey(hasConfiguredProvider());
+    setActiveProvider(getActiveProvider());
   }, [showApiKey]);
 
   const totalExercises = CHAPTERS.reduce((sum, ch) => sum + ch.exercises.length, 0);
@@ -56,7 +59,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setShowApiKey(true)}
-              title={hasKey ? 'API key configured' : 'Add API key to run exercises'}
+              title={hasKey ? `Using ${activeProvider === 'anthropic' ? 'Anthropic (Claude)' : 'Groq (Llama)'}` : 'Add API key to run exercises'}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
                 hasKey
                   ? 'border-teal-700 bg-teal-950 text-teal-400 hover:bg-teal-900'
@@ -64,7 +67,9 @@ export default function Navbar() {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${hasKey ? 'bg-teal-400' : 'bg-amber-400'}`} />
-              {hasKey ? 'API Key' : 'Add Key'}
+              {hasKey
+                ? activeProvider === 'anthropic' ? 'Claude (Premium)' : 'Groq (Free)'
+                : 'Add Key'}
             </button>
 
             {progress && (

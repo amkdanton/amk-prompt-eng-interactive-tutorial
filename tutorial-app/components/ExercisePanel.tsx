@@ -5,7 +5,7 @@ import { Exercise } from '@/lib/types';
 import { calculateXPForExercise } from '@/lib/store';
 import { TEST_INPUTS } from '@/lib/chapters';
 import XPToast from './XPToast';
-import { getStoredApiKey } from './ApiKeyModal';
+import { getActiveProvider, getActiveApiKey } from '@/lib/providerStore';
 
 interface ExercisePanelProps {
   exercise: Exercise;
@@ -62,7 +62,8 @@ export default function ExercisePanel({
           prompt: substituted,
           systemPrompt: substitutedSystem || undefined,
           prefill: substitutedPrefill || undefined,
-          apiKey: getStoredApiKey() || undefined,
+          apiKey: getActiveApiKey() || undefined,
+          provider: getActiveProvider(),
         }),
       });
 
@@ -93,7 +94,7 @@ export default function ExercisePanel({
         setXpToast({ xp: xpEarned, message: 'Exercise complete!' });
       }
     } catch {
-      setError('Failed to connect to Claude. Check your API key configuration.');
+      setError('Failed to connect. Check your API key configuration in Settings (⚙ icon).');
     }
 
     setLoading(false);
@@ -256,7 +257,7 @@ export default function ExercisePanel({
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                Claude&apos;s Response
+                AI Response
               </label>
               <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border ${
                 exercise.gradingFn(response)
