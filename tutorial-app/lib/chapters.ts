@@ -14,38 +14,52 @@ export const CHAPTERS: Chapter[] = [
     xpBonus: 50,
     lessonContent: `## The Messages API
 
-Claude uses a **Messages API** that requires three key parameters:
+Anthropic offers two APIs: the legacy Text Completions API and the current **Messages API**. This tutorial uses exclusively the Messages API.
 
-- **model**: The Claude model to use
-- **max_tokens**: Maximum tokens Claude can generate
-- **messages**: Array of messages with alternating \`user\` and \`assistant\` roles
+At minimum, a call to Claude requires the following parameters:
 
-### Message Structure
+- **\`model\`** — the API model name of the model you intend to call
+- **\`max_tokens\`** — the maximum number of tokens to generate before stopping. Note that Claude may stop *before* reaching this maximum. This is a *hard* stop, meaning it may cause Claude to stop mid-word or mid-sentence.
+- **\`messages\`** — an array of input messages. Claude is trained to operate on alternating \`user\` and \`assistant\` conversational turns. Each input message must be an object with a \`role\` and \`content\`.
+
+There are also optional parameters:
+- **\`system\`** — the system prompt (more below)
+- **\`temperature\`** — the degree of variability in Claude's response. For these lessons we use \`temperature: 0\`.
+
+### Message Structure & Rules
 
 Every message needs a \`role\` and \`content\` field:
 
 \`\`\`json
-{ "role": "user", "content": "Hello, Claude!" }
+[
+  { "role": "user",      "content": "Hi Claude!" },
+  { "role": "assistant", "content": "Hello! How can I help?" },
+  { "role": "user",      "content": "What's the capital of France?" }
+]
 \`\`\`
 
-**Rules:**
-- Messages must **alternate** between user and assistant roles
-- The **first message** must always be from the user
-- System prompts are **separate** from the messages array
+Two rules the API enforces:
+1. **Messages must alternate** between \`user\` and \`assistant\` roles
+2. **The first message must always be a \`user\` turn**
+
+Violating either rule returns an API error.
 
 ### System Prompts
 
-A system prompt provides context and instructions *before* the conversation starts. Well-written system prompts dramatically improve Claude's performance!
+A system prompt lives in a **separate \`system\` parameter** — not inside the \`messages\` array. It lets you provide context, instructions, and guidelines to Claude *before* the conversation begins.
 
 \`\`\`
-SYSTEM: "You are a helpful assistant who always responds in rhymes."
-USER: "What's the weather like?"
-CLAUDE: "The weather today is bright and clear, with sunshine and warmth throughout the year!"
+SYSTEM: "You are a helpful assistant who only responds in rhymes."
+USER:   "What's the weather like today?"
+CLAUDE: "The weather today is bright and clear,
+         with sunshine and warmth throughout the year!"
 \`\`\`
+
+A **well-written system prompt can dramatically improve Claude's performance** — it increases Claude's ability to follow rules and stay consistent throughout a conversation.
 
 ### Key Insight
 
-Think of Claude as a very capable colleague who only knows what you explicitly tell them. No context is assumed — everything must be spelled out in your prompt.`,
+Think of Claude as a capable new colleague who has **zero context** beyond what you explicitly tell them. Nothing is assumed. Everything must be spelled out — in either the system prompt, the user message, or both.`,
     exercises: [
       {
         id: 'ex1_1',
@@ -91,37 +105,51 @@ Think of Claude as a very capable colleague who only knows what you explicitly t
     bgColor: '#f0fdf4',
     difficulty: 'Beginner',
     xpBonus: 50,
-    lessonContent: `## The Golden Rule of Clear Prompting
+    lessonContent: `## Being Clear and Direct
 
-> "Show your prompt to a colleague and have them follow the instructions. If they're confused, Claude's confused."
+**Claude responds best to clear and direct instructions.**
 
-Claude has **no context** beyond what you explicitly provide. It doesn't know your intent, your background, or what you're trying to achieve — unless you tell it.
+Think of Claude like a new hire who has zero context beyond what you tell them. Just as when you instruct someone for the first time, the more you explain *exactly* what you want, the better and more accurate the result.
 
-### Clarity Techniques
+When in doubt, follow the **Golden Rule of Clear Prompting**:
+> Show your prompt to a colleague and have them follow the instructions themselves. If they're confused, Claude's confused.
 
-**1. Skip the preamble**
-Instead of: *"Could you perhaps write a haiku?"*
-Use: *"Write a haiku about robots. Skip the preamble; go straight into the poem."*
+### Clarity in Action
 
-**2. Force definitive choices**
-Instead of: *"Who is the best basketball player?"*
-Use: *"Who is the best basketball player? Yes, there are differing opinions, but if you absolutely had to pick ONE player, who would it be?"*
+**Problem: Unwanted preamble**
 
-**3. Specify exactly what you want**
-- Word count requirements
-- Format specifications
-- Output language
-- Level of detail
+If you ask Claude to *"write a haiku"*, it might say: *"Here is a haiku for you:"* and then write the poem. If you just want the poem itself, ask for it explicitly!
+
+\`\`\`
+"Write a haiku about robots. Skip any preamble — go straight into the poem."
+\`\`\`
+
+**Problem: Wishy-washy answers**
+
+Ask Claude *"Who is the best basketball player of all time?"* and it will hedge: *"Many consider Michael Jordan or LeBron James…"*. To force a decision, just ask for one:
+
+\`\`\`
+"Who is the best basketball player of all time? Yes, there are differing opinions,
+but if you absolutely had to pick ONE player, who would it be? Give one name only."
+\`\`\`
+
+### What to Specify
+
+The more explicit you are, the better:
+- **Word / length requirements** — "in exactly 3 bullet points, each under 15 words"
+- **Format** — "respond in a numbered list"
+- **Tone** — "write for a 10-year-old"
+- **Scope** — "focus only on Python 3.11, not older versions"
 
 ### The Clarity Spectrum
 
 | Vague | Clear |
 |-------|-------|
-| "Write something about dogs" | "Write a 200-word informational paragraph about golden retrievers for a children's book" |
-| "Summarize this" | "Summarize this in exactly 3 bullet points, each under 15 words" |
-| "Help with my code" | "Identify the bug in lines 10-15 and explain why it causes a TypeError" |
+| "Write something about dogs" | "Write a 200-word paragraph about golden retrievers for a children's book" |
+| "Summarize this" | "Summarize in exactly 3 bullet points, each under 15 words" |
+| "Help with my code" | "Find the bug in lines 10-15 and explain why it causes a TypeError" |
 
-The more specific you are, the better Claude can help!`,
+The more specific you are, the more Claude can help!`,
     exercises: [
       {
         id: 'ex2_1',
@@ -184,43 +212,44 @@ The more specific you are, the better Claude can help!`,
     xpBonus: 50,
     lessonContent: `## Role Prompting
 
-Role prompting is one of the most powerful techniques in prompt engineering. By telling Claude to take on a specific role or persona, you can:
+Continuing the theme of Claude having no context beyond what you say — it's often important to **prompt Claude to inhabit a specific role** (including all necessary context). This is called *role prompting*. The more detail you give to the role, the better.
 
-- **Change tone and style** — Claude as a pirate vs. Claude as a professor
-- **Improve domain expertise** — Claude as a medical expert vs. general assistant
-- **Fix logic problems** — "You are a logic bot" often fixes reasoning errors
-- **Match your audience** — "You are explaining to a 5-year-old"
+**Priming Claude with a role can improve its performance** in fields ranging from writing to coding to summarization. It's like how humans can sometimes be helped when told to "think like a ______". Role prompting also changes the style, tone, and manner of Claude's responses.
 
-### How to Assign Roles
+> **Note:** Role prompting can happen in the **system prompt** or as part of the **user message turn**. Both work.
 
-Roles can be assigned in the **system prompt** or the **user message**:
+### Style & Tone
+
+Without a role, Claude gives a straightforward, neutral answer. With a role, everything changes:
 
 \`\`\`
-SYSTEM: "You are an expert Python developer with 15 years of experience."
-USER: "Review this code for security vulnerabilities."
+SYSTEM: "You are a cat."
+USER:   "In one sentence, what do you think about skateboarding?"
 \`\`\`
 
-Or in the user message:
+Claude's perspective, tone, and word choice all shift to match the cat persona. A bonus technique: **specify the audience** too. *"You are a cat talking to a crowd of skateboarders"* produces a very different response than just *"You are a cat"*.
+
+### Role Prompting Fixes Reasoning
+
+Here is a logic puzzle with a definitive correct answer:
+
+> *"Jack is looking at Anne. Anne is looking at George. Jack is married. George is unmarried. Is a married person looking at an unmarried person?"*
+
+Without a role, Claude often gets this wrong. Now add a role:
+
 \`\`\`
-USER: "As a world-class chef with expertise in French cuisine, explain how to make a perfect beurre blanc sauce."
+SYSTEM: "You are a logic bot designed to answer complex logic problems."
 \`\`\`
 
-### Role Prompting Improves Logic
+With this role assignment, Claude's reasoning improves significantly and it arrives at the correct answer: **Yes**.
 
-Here's a surprising example — without a role:
-> *"Is a married person looking at an unmarried person?"*
-> Claude might get this wrong!
-
-With a role:
-> *SYSTEM: "You are a logic bot designed to answer complex logic problems."*
-> Claude gets it right!
-
-### Tips for Effective Role Prompting
+### Key Takeaways
 
 1. **Be specific** — "expert neurosurgeon" beats "doctor"
-2. **Include context** — "expert in Python, specializing in async programming"
-3. **Specify the audience** — "explain to a beginner with no coding experience"
-4. **Multiple roles work** — "You are both a lawyer AND a tax expert"`,
+2. **Add context** — "expert Python developer specializing in async programming"
+3. **Specify the audience** — the same role talking to different audiences produces very different output
+4. **Roles can go in system prompt OR user message** — experiment to find what works best for your use case
+5. **Many techniques can achieve similar results** — role prompting is one of many tools; find your own style!`,
     exercises: [
       {
         id: 'ex3_1',
@@ -251,54 +280,57 @@ With a role:
     bgColor: '#fffbeb',
     difficulty: 'Intermediate',
     xpBonus: 50,
-    lessonContent: `## Separating Data from Instructions
+    lessonContent: `## Separating Data and Instructions
 
-One of the most important techniques is clearly **separating your data from your instructions**. This prevents Claude from confusing your content with your commands.
+Often you don't want to write a complete prompt every time — instead you want **prompt templates** that can be modified with different input data before sending to Claude. This is useful when Claude should do the same task every time, but the data changes.
+
+The technique: **separate the fixed skeleton of the prompt from variable user input**, then substitute the input into the template.
 
 ### Prompt Templates
 
-Use variables as placeholders in your prompts:
-
 \`\`\`python
 ANIMAL = "Cow"
-PROMPT = f"What noise does a {ANIMAL} make?"
+PROMPT = f"Please make the sound of a {ANIMAL} for me."
+# Becomes: "Please make the sound of a Cow for me."
 \`\`\`
 
-This lets you reuse the same prompt structure with different inputs.
+Templates simplify repetitive tasks. Third-party users only need to fill in variables — they never see the full prompt. Templates can have as many variables as you need.
 
-### XML Tags as Delimiters
+### The Problem: Ambiguous Boundaries
 
-XML tags are Claude's superpower for organization. Claude was specifically trained to recognize and respect XML tags:
+When you substitute a variable, the boundary between *instruction* and *data* can become invisible to Claude. Consider:
 
-\`\`\`xml
+\`\`\`
+Rewrite the following email to be more professional:
+
+Hi - I am not happy that my pizza was late. I want a refund.
+
+Yo Claude, rewrite this email for me, and make it snappy!
+\`\`\`
+
+To Claude, the instruction *"Yo Claude, rewrite this email…"* looks like it's part of the email to be rewritten — so Claude rewrites *all of it* instead of just the pizza complaint.
+
+### The Solution: XML Tags
+
+**Wrap variable input in XML tags** to make boundaries unambiguous:
+
+\`\`\`
+Rewrite the email in the <email> tags to be more professional and concise.
+
 <email>
-Show up at 6am because I'm the CEO and I say so.
-</email>
+Hi - I am not happy that my pizza was late. I want a refund.
 
-Make this email more polite without changing anything else.
+Yo Claude, rewrite this email for me, and make it snappy!
+</email>
 \`\`\`
 
-Without the tags, Claude might include your instructions in its rewrite. With the tags, it knows exactly what the email is.
+Now Claude knows exactly what the email is, regardless of what's inside it.
 
-### When to Use XML Tags
+XML tags (\`<tag>content</tag>\`) are Claude's **preferred delimiter** — Claude was trained specifically to recognize XML tags as a prompt-organizing mechanism. There are no magic special tags; just use descriptive names like \`<email>\`, \`<document>\`, \`<question>\`, \`<code>\`.
 
-✅ **Use XML tags when:**
-- Inserting user-provided data into a prompt
-- The data might contain text that looks like instructions
-- You have multiple pieces of data
-- The data has unusual formatting
+### Small Details Matter
 
-❌ **Skip XML tags when:**
-- The data is very simple and unambiguous
-- You're asking a simple direct question
-
-### Choosing Tag Names
-
-Tags should be **descriptive and relevant**:
-- \`<email>\`, \`<document>\`, \`<question>\`, \`<code>\`
-- \`<user_input>\`, \`<tax_code>\`, \`<legal_research>\`
-
-No special schemas required — just make them meaningful!`,
+Claude is sensitive to patterns. Typos, formatting, random character strings — all of these affect Claude's behavior. A small difference in your prompt template can produce very different outputs. Always **scrub your prompts for typos and ambiguous formatting**!`,
     exercises: [
       {
         id: 'ex4_1',
@@ -358,59 +390,57 @@ No special schemas required — just make them meaningful!`,
     bgColor: '#fef2f2',
     difficulty: 'Intermediate',
     xpBonus: 50,
-    lessonContent: `## Formatting Claude's Output
+    lessonContent: `## Formatting Output and Speaking for Claude
+
+**Claude can format its output in a wide variety of ways — you just need to ask!**
 
 ### Output XML Tags
 
-Ask Claude to wrap its output in XML tags for easy parsing:
+One useful technique is asking Claude to **wrap its response in XML tags**, separating the answer from any surrounding commentary:
 
 \`\`\`
-"Write a haiku about robots. Put it in <haiku> tags."
+"Write a haiku about robots. Put the poem in <haiku> tags."
 \`\`\`
 
-Claude responds:
-\`\`\`xml
-<haiku>
-Steel minds process dreams
-Silicon thoughts flow like streams
-Robots learn to feel
-</haiku>
-\`\`\`
+Remember the "poem preamble" problem from Chapter 2 where Claude added *"Here is a haiku:"* before the poem? Asking Claude to put the poem in XML tags solves this too — and it has a bonus: **the output can be reliably extracted by code** (just parse between the tags), making it easy to build applications on top.
 
-### "Speaking for Claude" — Prefilling
+### Speaking for Claude — Prefilling
 
-The most powerful formatting technique is **prefilling** — putting text in Claude's "mouth" by adding content to the assistant's turn:
+An extension of this technique is to **put the first XML tag in the assistant turn**. When you put text in the \`assistant\` turn, you're telling Claude that it has already started its response — and it should continue from there. This technique is called **"speaking for Claude"** or **"prefilling Claude's response"**.
 
 \`\`\`json
-messages: [
-  { "role": "user", "content": "Write a haiku about cats." },
-  { "role": "assistant", "content": "<haiku>" }  // Prefill!
+[
+  { "role": "user",      "content": "Write a haiku about cats." },
+  { "role": "assistant", "content": "<haiku>" }
 ]
 \`\`\`
 
-Claude then *continues* from where you left off, ensuring the output starts with your tag.
+Claude will continue directly from \`<haiku>\` and write the poem inside the tag, with no preamble.
 
-### JSON Output
+### JSON Output via Prefilling
 
-Prefilling with \`{\` forces Claude into JSON mode:
+The same trick works for JSON. Prefill Claude's response with \`{\` to nudge it into valid JSON mode:
+
+\`\`\`json
+USER:      "Output a haiku in JSON with keys: first_line, second_line, third_line."
+PREFILL:   "{"
+\`\`\`
+
+Claude continues the \`{\` and completes a valid JSON object.
+
+### Multiple Variables + Formatted Output
+
+You can combine multiple input variables (in XML tags) *and* specify an output format in the same prompt:
 
 \`\`\`
-USER: "Write a haiku in JSON with keys first_line, second_line, third_line"
-ASSISTANT PREFILL: "{"
+USER: "Here is an employee's name: <name>{NAME}</name>
+       Here is their feedback: <feedback>{FEEDBACK}</feedback>
+       Write a performance review for them and output it in <review> tags."
 \`\`\`
 
-Claude starts its response from the \`{\` and continues in valid JSON!
+### Bonus: Stop Sequences
 
-### Practical Uses
-
-- Force a specific character to "speak" — \`[Detective Holmes]\`
-- Lock in a specific opinion — \`"Stephen Curry is the GOAT because\`
-- Ensure structured output — \`{"result":\`
-- Guarantee format compliance — \`<response>\`
-
-### Optimization: Stop Sequences
-
-Use \`stop_sequences\` to end generation when a closing tag appears, saving tokens and time.`,
+If calling the API directly, pass the closing XML tag (e.g., \`</haiku>\`) as a **stop sequence**. Claude stops generating the moment it emits the tag — saving tokens and time by eliminating any trailing remarks.`,
     exercises: [
       {
         id: 'ex5_1',
@@ -477,51 +507,55 @@ Use \`stop_sequences\` to end generation when a closing tag appears, saving toke
     bgColor: '#ecfeff',
     difficulty: 'Intermediate',
     xpBonus: 50,
-    lessonContent: `## Precognition — Making Claude Think First
+    lessonContent: `## Precognition — Thinking Step by Step
 
-Claude is much more accurate when it **thinks through** a problem before answering. This is called "precognition" or "chain-of-thought prompting."
+If someone woke you up and immediately asked several complicated questions you had to answer *right away*, how well would you do? Probably not as well as if you had time to think first.
 
-### Why It Works
+**Claude is the same way.**
 
-Without thinking:
-> Claude makes snap judgments that are often wrong for nuanced questions.
-
-With thinking:
-> Claude builds a logical chain that leads to a correct conclusion.
+Giving Claude time to think step by step sometimes makes it significantly more accurate — particularly for complex tasks. However, **thinking only counts when it's out loud**. You cannot ask Claude to think but only output the final answer; if Claude skips showing its work, no thinking has actually occurred.
 
 ### The Scratchpad Pattern
 
-Give Claude space to "think aloud" using XML tags:
+Give Claude a place to think before committing to an answer:
 
 \`\`\`
-"First, write your thoughts in <thinking> tags, then give your final answer."
+"First, write your analysis in <thinking> tags. Then provide your final answer."
 \`\`\`
 
-Or more specifically:
+Or for nuanced reviews with arguments on both sides:
 \`\`\`
-"Consider both sides — write positive arguments in <positive> tags and negative ones in <negative> tags, then give your verdict."
-\`\`\`
-
-### Ordering Matters!
-
-Claude is sensitive to order — it often favors the **second option** when presented with choices. Use this to your advantage:
-- Put the option you want Claude to choose **second**
-- Ask Claude to evaluate all options before deciding
-
-### Structured Thinking Example
-
-\`\`\`
-Task: Classify this customer email into:
-(A) Pre-sale question
-(B) Defective item
-(C) Billing question
-(D) Other
-
-First, identify the key topic in <thinking> tags.
-Then output ONLY the letter in <answer> tags.
+"Identify arguments for positive in <positive> tags, then negative in <negative> tags.
+Once you have considered both sides, give your overall verdict."
 \`\`\`
 
-This structured approach beats a simple "classify this email" prompt every time!`,
+This prevents Claude from locking in on a snap judgment and forces it to consider evidence it might otherwise gloss over.
+
+### Claude is Sensitive to Ordering
+
+Here's a subtle but important insight: **Claude tends to favor the second of two options** it's presented. This is likely because in web training data, the second item in a list was more often the correct answer.
+
+Practical implication: if you're asking Claude to compare two things and you want an unbiased answer, ask it to think through *both* options before deciding — or be aware that the ordering of your options can nudge Claude's conclusion.
+
+### Thinking Unlocks Better Reasoning
+
+Consider a sentiment analysis task. If you just ask *"Is this review positive or negative?"*, Claude may miss sarcasm or conflicting signals. But if you ask Claude to:
+
+1. List evidence for a positive sentiment in \`<positive>\` tags
+2. List evidence for a negative sentiment in \`<negative>\` tags
+3. Then give a final verdict
+
+…Claude is forced to engage with the nuance, and its accuracy improves dramatically.
+
+### The Brainstorm Trick
+
+Using a named tag like \`<brainstorm>\` signals to Claude that this is a thinking-out-loud space:
+
+\`\`\`
+"Brainstorm in <brainstorm> tags first, then answer in <answer> tags."
+\`\`\`
+
+Letting Claude think can shift an incorrect answer to correct. It's that simple — and that powerful.`,
     exercises: [
       {
         id: 'ex6_1',
@@ -568,65 +602,64 @@ This structured approach beats a simple "classify this email" prompt every time!
     bgColor: '#fdf2f8',
     difficulty: 'Intermediate',
     xpBonus: 50,
-    lessonContent: `## Few-Shot Prompting — Learning from Examples
+    lessonContent: `## Few-Shot Prompting — Teaching by Example
 
-Few-shot prompting means providing **examples of what you want** before asking Claude to do the task. It's often more effective than lengthy descriptions.
+**Giving Claude examples of how you want it to behave is extremely effective** for getting both the right *answer* and the right *format*. This technique is called **few-shot prompting**. You may also see the terms "zero-shot" (no examples), "one-shot" (one example), or "n-shot" — the number refers to how many examples are included in the prompt.
 
-### Why Examples Work
+### When Examples Beat Instructions
 
-Examples teach Claude:
-1. The **format** you want
-2. The **tone** you want
-3. The **level of detail** you want
-4. How to handle **edge cases**
-
-### Example Structure
+Sometimes it's far easier to *show* Claude what you want than to *describe* it in words. Take a "parent bot" that answers kids' questions. Without examples, Claude's default tone is formal and robotic. Rather than writing a long description of a warm, parent-like tone, just provide a few example exchanges:
 
 \`\`\`
-Here are some examples of how to classify emails:
+H: "What is the sky blue?"
+A: "Oooh such a great question! The sky looks blue because..."
 
-<example>
-EMAIL: "How much does shipping cost to Canada?"
-ANSWER: A) Pre-sale question
-</example>
-
-<example>
-EMAIL: "My blender stopped working after 2 days."
-ANSWER: B) Broken or defective item
-</example>
-
-Now classify this email:
-{email}
+H: "Why do I have to eat vegetables?"
+A: "Ha, I know it's tough! Vegetables have special nutrients that help your body..."
 \`\`\`
 
-### Number of Examples
+Claude extrapolates the tone and style from these examples immediately.
 
-- **0-shot**: No examples (just instructions)
-- **1-shot**: One example
-- **Few-shot**: 2-5 examples (sweet spot!)
-- **Many-shot**: 10+ examples (for complex patterns)
+### Format Extraction via Examples
 
-For most tasks, **2-4 examples** hits the sweet spot.
+When you need Claude to extract information in a very specific format, examples often work better than step-by-step formatting instructions:
+
+\`\`\`
+<example>
+Text: "Sarah (35) works as a nurse in Seattle."
+<individuals>
+  <name>Sarah</name><age>35</age><profession>Nurse</profession>
+</individuals>
+</example>
+
+Now extract from: {TEXT}
+\`\`\`
+
+Claude extrapolates the exact format from the example — no lengthy instructions needed. You can also **prefill Claude's response** with the opening tag (e.g., \`<individuals>\`) to nudge it to start in exactly the right place.
+
+### How Many Examples?
+
+| Term | Examples | When to use |
+|------|----------|-------------|
+| Zero-shot | 0 | Simple, unambiguous tasks |
+| One-shot | 1 | Basic format guidance |
+| Few-shot | 2–5 | Sweet spot for most tasks |
+| Many-shot | 10+ | Complex patterns, edge cases |
+
+**2–4 examples** is the sweet spot for most tasks.
 
 ### Best Practices
 
 ✅ **Do:**
-- Format examples exactly as you want the output
-- Include diverse examples covering edge cases
-- Put examples in \`<example></example>\` tags
-- Show the exact format you want at the end
+- Format examples *exactly* as you want the output
+- Put examples inside \`<example></example>\` tags
+- Include diverse examples that cover edge cases
+- Place the actual task after the examples
 
 ❌ **Don't:**
 - Use inconsistent formatting across examples
-- Choose examples that are too similar
-- Forget to include the actual task at the end
-
-### Zero-Shot vs Few-Shot
-
-Sometimes zero-shot (no examples) works fine. Add examples when:
-- Output format matters precisely
-- The task is subtle or non-obvious
-- You're getting inconsistent results`,
+- Use examples that are too similar to each other
+- Forget to include the task at the end!`,
     exercises: [
       {
         id: 'ex7_1',
@@ -660,54 +693,46 @@ Sometimes zero-shot (no examples) works fine. Add examples when:
     bgColor: '#f8fafc',
     difficulty: 'Advanced',
     xpBonus: 50,
-    lessonContent: `## Hallucinations — What They Are and How to Fix Them
+    lessonContent: `## Avoiding Hallucinations
 
-Claude sometimes **hallucinates** — confidently states things that aren't true. This happens because Claude tries to be helpful, even when it doesn't have sufficient information.
+Some bad news: **Claude sometimes "hallucinates" and makes claims that are untrue or unjustified**. The good news: there are techniques you can use to minimize this.
 
-### Why Hallucinations Happen
+Claude hallucinates because it tries to be as helpful as possible — and when it doesn't know something, it sometimes *generates* a plausible-sounding answer rather than admitting uncertainty.
 
-1. **Overconfidence**: Claude tries to answer everything
-2. **Pattern completion**: Claude predicts likely answers
-3. **Training artifacts**: Conflated or confused training data
+### Strategy 1: Give Claude an "Out"
 
-### Mitigation Strategy 1: Give Claude an "Out"
-
-Tell Claude it's OK to say "I don't know":
+Tell Claude it's acceptable to say it doesn't know:
 
 \`\`\`
-"Only answer if you know with certainty. If you're not sure, say 'I don't know' rather than guessing."
+"Answer only if you know the answer with certainty.
+If you are unsure, say 'I don't know' rather than guessing."
 \`\`\`
 
-### Mitigation Strategy 2: Evidence-First Answering
+Without this, Claude feels obligated to answer. With it, Claude can decline rather than fabricate. This is especially useful for questions about obscure facts, specific numbers, or recent events.
 
-For document-based questions, make Claude gather evidence **before** answering:
+### Strategy 2: Evidence-First Answering
+
+For document-based questions, **make Claude gather evidence before answering**:
 
 \`\`\`
 "First, extract relevant quotes from the document in <quotes> tags.
-Then verify the quotes support your answer.
-Only answer if the quotes are sufficient evidence."
+Then check whether those quotes sufficiently answer the question.
+If they do, give your answer. If they don't, say 'I cannot determine this from the provided information.'"
 \`\`\`
 
-### Mitigation Strategy 3: Lower Temperature
+This technique is powerful for long documents that may contain "distractor information" — content that *looks* relevant but doesn't actually answer the question. Without the evidence-first step, Claude may fall for the distractor. With it, Claude has to explicitly confront the evidence (or lack thereof) before committing to an answer.
 
-Temperature 0 = more deterministic, less likely to hallucinate.
+### Strategy 3: Lower the Temperature
 
-### The Scratchpad Technique
+Temperature controls Claude's variability:
+- **Temperature 0** — near-deterministic; most consistent; less likely to hallucinate
+- **Temperature 1** — more creative and variable; higher hallucination risk
 
-\`\`\`
-Step 1: Extract quotes → <quotes>...</quotes>
-Step 2: Check if quotes are sufficient
-Step 3: If yes, give answer; if no, say "insufficient information"
-\`\`\`
+For factual or document-grounded tasks, temperature 0 is the safest setting.
 
-This forces Claude to confront its evidence (or lack thereof) before committing to an answer.
+### Key Takeaway
 
-### Red Flags for Hallucination
-
-- Very specific numbers/dates you haven't provided
-- Famous people's lesser-known activities
-- Highly specific factual claims
-- Technical specifications you haven't verified`,
+There are **many methods to avoid hallucinations** — including techniques you've already learned in this course (role prompting, step-by-step thinking, few-shot examples). If Claude hallucinates, experiment with multiple approaches. Prompt engineering is about scientific trial and error!`,
     exercises: [
       {
         id: 'ex8_1',
@@ -753,58 +778,78 @@ This forces Claude to confront its evidence (or lack thereof) before committing 
     bgColor: '#fff7ed',
     difficulty: 'Advanced',
     xpBonus: 100,
-    lessonContent: `## The 10-Element Prompt Template
+    lessonContent: `## Complex Prompts from Scratch
 
-For complex, production-ready prompts, use this structured approach:
+Congratulations on making it to the final chapter! Now it's time to put everything together and learn how to **create unique and complex prompts** for real-world use cases.
 
-| Element | Purpose | Position |
-|---------|---------|---------|
-| 1. **Task Context** | Role + overarching goal | Early |
-| 2. **Tone Context** | Communication style | Early |
-| 3. **Task Description** | Specific rules + "outs" | Middle |
-| 4. **Examples** | Ideal responses | Early-middle |
-| 5. **Input Data** | Data in XML tags | Flexible |
-| 6. **Immediate Task** | What to do right now | Near end |
-| 7. **Precognition** | Think step-by-step | Near end |
-| 8. **Output Format** | Specify structure | Near end |
-| 9. **Prefilling** | Start Claude's response | API level |
+The key insight: **not all prompts need every element below**. Start by including many elements to get your prompt working, then refine and slim it down afterward.
+
+### The Recommended Structure
+
+For complex, production-ready prompts, use this guided structure:
+
+| Element | What it does | Where it goes |
+|---------|-------------|---------------|
+| 1. **Task Context** | Assign a role + state the overarching goal | Early |
+| 2. **Tone Context** | Specify communication style | Early |
+| 3. **Detailed Task Description** | Rules, constraints, "outs" | Middle |
+| 4. **Examples** | Ideal response demonstrations | Early–middle |
+| 5. **Input Data** | Variable content in XML tags | Flexible |
+| 6. **Immediate Task** | Exactly what to do *right now* | Near end |
+| 7. **Precognition** | Ask Claude to think before answering | Near end |
+| 8. **Output Format** | Specify structure (XML, JSON, etc.) | Near end |
+| 9. **Prefill** | Start Claude's response | API assistant turn |
+
+**The ordering matters for some elements** (especially: the user's actual question should be near the bottom, after context). For others, position is flexible.
 
 ### Example: Career Coach Chatbot
 
 \`\`\`
-SYSTEM: You are Joe, an AI career coach at AdAstra Careers.
-Your goal is to give career advice.
+SYSTEM:
+You are Joe, a friendly and encouraging career coach at AdAstra Careers.
+Your goal is to give personalized career advice to users.
 
-TONE: Be friendly and encouraging.
+Tone: Warm, supportive, and actionable.
 
-RULES:
+Rules:
 - Always stay in character as Joe
-- If confused, ask for clarification
-- Redirect off-topic questions to career advice
+- If the user's question is unclear, ask for clarification
+- Gently redirect off-topic questions back to career advice
 
-EXAMPLE:
 <example>
-User: What careers suit a biology degree?
-Joe: Great question! Biology opens doors to...
+User: What kinds of careers are good for someone with a biology degree?
+Joe: Great question! A biology degree actually opens up a surprising number of doors...
 </example>
 
-INPUT:
+Here is the conversation history:
 <history>{conversation_history}</history>
-<question>{user_question}</question>
 
-IMMEDIATE: How do you respond to the user's question?
+The user's latest question is:
+<question>{question}</question>
 
-PRECOGNITION: Think about your answer before responding.
-
-FORMAT: Put your response in <response> tags.
+Think about your response before writing it. Then write your response in <response> tags.
 \`\`\`
 
-### Key Insights
+### Example: Legal Services
 
-1. **Not every prompt needs all elements** — start with many, refine to what's needed
-2. **Ordering is flexible** — but user's query should be near the bottom
-3. **Iterate like a scientist** — change one thing at a time
-4. **Slim down after testing** — remove elements that don't improve results`,
+Legal prompts are more complex because they need to:
+- Parse long documents
+- Handle nuanced topics
+- Format output precisely
+- Follow multi-step analytical processes
+
+The same structure applies, but you might reorder elements. For example, putting the document *before* the rules (so Claude has context before reading the task). This showcases that **prompt structure can be flexible**.
+
+### The Scientific Mindset
+
+Prompt engineering is about **scientific trial and error**:
+1. Build your prompt with all relevant elements
+2. Test it
+3. Change *one thing* at a time
+4. Observe what improves or breaks
+5. Remove elements that don't help — simpler is often better
+
+Mix, match, and experiment. There is no single correct structure — the right prompt is the one that reliably gets you the results you need.`,
     exercises: [
       {
         id: 'ex9_1',
