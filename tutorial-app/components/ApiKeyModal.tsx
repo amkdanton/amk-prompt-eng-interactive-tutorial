@@ -39,26 +39,23 @@ export default function ApiKeyModal({ onClose }: ApiKeyModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-3xl">🔑</span>
-          <div>
-            <h2 className="text-xl font-black text-slate-800">Anthropic API Key</h2>
-            <p className="text-slate-500 text-sm">Required to run prompts against Claude</p>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-lg shadow-2xl p-7 w-full max-w-md mx-4">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-white mb-1">Anthropic API Key</h2>
+          <p className="text-zinc-400 text-sm">Required to run prompts against Claude</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 text-sm text-blue-700">
-          <strong>Where to get one:</strong> Visit{' '}
-          <span className="font-mono bg-blue-100 px-1 rounded">console.anthropic.com</span>{' '}
-          → API Keys → Create Key. The key starts with{' '}
-          <span className="font-mono bg-blue-100 px-1 rounded">sk-ant-</span>
+        <div className="border border-zinc-700 bg-zinc-800/50 rounded-md p-4 mb-5 text-sm text-zinc-400">
+          <strong className="text-zinc-300">Where to get one:</strong> Visit{' '}
+          <span className="font-mono bg-zinc-700 text-teal-400 px-1.5 py-0.5 rounded text-xs">console.anthropic.com</span>{' '}
+          &rarr; API Keys &rarr; Create Key. It starts with{' '}
+          <span className="font-mono bg-zinc-700 text-teal-400 px-1.5 py-0.5 rounded text-xs">sk-ant-</span>
           <br /><br />
-          <strong>Privacy:</strong> Your key is stored only in your browser's localStorage and sent directly to the Anthropic API. It is never logged.
+          <strong className="text-zinc-300">Privacy:</strong> Stored only in your browser&apos;s localStorage. Never logged server-side.
         </div>
 
-        <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">
           API Key
         </label>
         <input
@@ -67,29 +64,29 @@ export default function ApiKeyModal({ onClose }: ApiKeyModalProps) {
           onChange={(e) => setKey(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSave()}
           placeholder="sk-ant-api03-..."
-          className="w-full px-4 py-3 border-2 border-slate-200 focus:border-purple-400 rounded-xl font-mono text-sm outline-none transition-colors mb-4"
+          className="w-full px-4 py-2.5 border border-zinc-700 bg-zinc-800 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 rounded-md font-mono text-sm text-white placeholder-zinc-600 outline-none transition-colors mb-4"
           autoFocus
         />
 
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button
             onClick={handleSave}
             disabled={!key.trim()}
-            className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all"
+            className="flex-1 py-2.5 bg-teal-700 hover:bg-teal-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-md font-medium text-sm transition-colors"
           >
-            {saved ? '✓ Saved!' : 'Save Key'}
+            {saved ? 'Saved' : 'Save Key'}
           </button>
           {getStoredApiKey() && (
             <button
               onClick={handleClear}
-              className="px-4 py-3 border-2 border-red-200 text-red-500 hover:bg-red-50 rounded-xl font-medium transition-colors"
+              className="px-4 py-2.5 border border-zinc-700 text-zinc-400 hover:text-red-400 hover:border-red-800 rounded-md font-medium text-sm transition-colors"
             >
               Clear
             </button>
           )}
           <button
             onClick={onClose}
-            className="px-4 py-3 border-2 border-slate-200 text-slate-500 hover:bg-slate-50 rounded-xl font-medium transition-colors"
+            className="px-4 py-2.5 border border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300 rounded-md font-medium text-sm transition-colors"
           >
             Cancel
           </button>

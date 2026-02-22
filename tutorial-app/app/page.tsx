@@ -9,15 +9,15 @@ import { CHAPTERS } from '@/lib/chapters';
 import { LEVELS } from '@/lib/types';
 
 const FEATURES = [
-  { icon: '🎮', title: 'Gamified Learning', desc: 'Earn XP, level up, and unlock badges as you master each technique' },
-  { icon: '⚡', title: 'Real Claude API', desc: 'Test your prompts against real Claude responses instantly' },
-  { icon: '🏆', title: 'Leaderboard', desc: 'Compete with other learners and claim the top spot' },
-  { icon: '📜', title: 'Certificate', desc: 'Earn a personalized certificate of completion with your score' },
+  { icon: '⬡', title: 'Gamified Learning', desc: 'Earn XP, level up, and unlock badges as you master each technique' },
+  { icon: '⬡', title: 'Real Claude API', desc: 'Test your prompts against real Claude responses instantly' },
+  { icon: '⬡', title: 'Leaderboard', desc: 'Compete with other learners and claim the top spot' },
+  { icon: '⬡', title: 'Certificate', desc: 'Earn a personalized certificate of completion with your score' },
 ];
 
 export default function HomePage() {
   const router = useRouter();
-  const { progress, setProgress, refreshProgress } = useProgress();
+  const { progress, setProgress } = useProgress();
   const [username, setUsername] = useState('');
   const [showForm, setShowForm] = useState(false);
 
@@ -40,134 +40,127 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 text-white">
-        {/* Animated background orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        </div>
-
-        <div className="relative max-w-6xl mx-auto px-6 py-24 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm mb-8">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            Powered by Claude AI • 9 Chapters • {totalExercises} Interactive Exercises
+      {/* Hero */}
+      <div className="bg-zinc-950 text-white">
+        <div className="max-w-5xl mx-auto px-6 py-24 md:py-32">
+          <div className="inline-flex items-center gap-2 border border-zinc-700 rounded-full px-3 py-1 text-xs text-zinc-400 mb-10">
+            <span className="w-1.5 h-1.5 bg-teal-400 rounded-full" />
+            Powered by Claude &middot; 9 Chapters &middot; {totalExercises} Exercises
           </div>
 
-          <h1 className="text-6xl font-black mb-6 leading-tight">
-            Master{' '}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Prompt Engineering
-            </span>
+          <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-[1.1] mb-6">
+            Master Prompt Engineering
             <br />
-            The Fun Way
+            <span className="text-teal-400">the right way.</span>
           </h1>
 
-          <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-            Level up your AI skills through hands-on exercises, earn XP, climb the leaderboard,
-            and earn a certificate — all while learning real prompting techniques used by professionals.
+          <p className="text-lg text-zinc-400 mb-10 max-w-xl leading-relaxed">
+            Learn hands-on with real Claude exercises. Earn XP, climb the leaderboard,
+            and earn a certificate as you build production-ready prompting skills.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          <div className="flex flex-col sm:flex-row gap-3">
             {progress ? (
-              <div className="flex flex-col items-center gap-3">
-                <div className="bg-white/10 rounded-2xl px-6 py-3 text-sm">
-                  Welcome back, <strong>{progress.username}</strong>! You have {progress.totalXP} XP.
-                  ({completedExercises}/{totalExercises} exercises done)
-                </div>
-                <div className="flex gap-3">
-                  <Link
-                    href="/tutorial"
-                    className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-purple-500/30"
-                  >
-                    Continue Learning →
-                  </Link>
-                  <button
-                    onClick={() => { setShowForm(true); }}
-                    className="px-6 py-4 border-2 border-white/30 hover:bg-white/10 rounded-2xl font-medium transition-all"
-                  >
-                    New Player
-                  </button>
-                </div>
-              </div>
+              <>
+                <Link
+                  href="/tutorial"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-md font-medium text-sm transition-colors"
+                >
+                  Continue Learning &rarr;
+                </Link>
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="inline-flex items-center justify-center px-6 py-3 border border-zinc-700 hover:border-zinc-500 text-zinc-300 rounded-md font-medium text-sm transition-colors"
+                >
+                  New Player
+                </button>
+              </>
+            ) : !showForm ? (
+              <button
+                onClick={() => setShowForm(true)}
+                className="inline-flex items-center justify-center px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-md font-medium text-sm transition-colors"
+              >
+                Start Learning &rarr;
+              </button>
             ) : (
-              <div>
-                {!showForm ? (
-                  <button
-                    onClick={() => setShowForm(true)}
-                    className="px-10 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-2xl font-bold text-xl transition-all shadow-lg shadow-purple-500/30"
-                  >
-                    Start Your Journey 🚀
-                  </button>
-                ) : (
-                  <div className="flex gap-3 justify-center">
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleStart()}
-                      placeholder="Enter your username..."
-                      className="px-6 py-4 rounded-2xl bg-white/10 border border-white/30 text-white placeholder-white/50 text-lg focus:outline-none focus:ring-2 focus:ring-purple-400 w-64"
-                      autoFocus
-                    />
-                    <button
-                      onClick={handleStart}
-                      disabled={!username.trim()}
-                      className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 rounded-2xl font-bold text-lg transition-all"
-                    >
-                      Let's Go!
-                    </button>
-                  </div>
-                )}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleStart()}
+                  placeholder="Enter your username..."
+                  className="px-4 py-3 rounded-md bg-zinc-900 border border-zinc-700 text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 w-56"
+                  autoFocus
+                />
+                <button
+                  onClick={handleStart}
+                  disabled={!username.trim()}
+                  className="px-5 py-3 bg-teal-600 hover:bg-teal-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-md font-medium text-sm transition-colors"
+                >
+                  Go
+                </button>
               </div>
             )}
           </div>
 
+          {progress && (
+            <p className="mt-4 text-sm text-zinc-500">
+              Welcome back, <span className="text-zinc-300">{progress.username}</span> &mdash; {progress.totalXP} XP &middot; {completedExercises}/{totalExercises} exercises
+            </p>
+          )}
+
           {/* Stats */}
-          <div className="flex justify-center gap-8 text-sm text-white/60">
-            <div><span className="text-white font-bold text-2xl">{totalXP}+</span><br/>Total XP available</div>
-            <div><span className="text-white font-bold text-2xl">9</span><br/>Chapters</div>
-            <div><span className="text-white font-bold text-2xl">{totalExercises}</span><br/>Exercises</div>
-            <div><span className="text-white font-bold text-2xl">6</span><br/>Rank levels</div>
+          <div className="flex gap-10 mt-16 text-sm">
+            {[
+              { value: `${totalXP}+`, label: 'XP available' },
+              { value: '9', label: 'Chapters' },
+              { value: String(totalExercises), label: 'Exercises' },
+              { value: '6', label: 'Rank levels' },
+            ].map((s) => (
+              <div key={s.label}>
+                <div className="text-2xl font-semibold text-white">{s.value}</div>
+                <div className="text-zinc-500 mt-0.5">{s.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Features */}
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-black text-slate-800 mb-3">Why PromptCraft Academy?</h2>
-          <p className="text-slate-500">Learn by doing, not just reading</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="max-w-5xl mx-auto px-6 py-20">
+        <h2 className="text-2xl font-semibold text-zinc-900 mb-2 tracking-tight">Why PromptCraft Academy?</h2>
+        <p className="text-zinc-500 mb-10 text-sm">Learn by doing, not just reading</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURES.map((f) => (
-            <div key={f.title} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="text-4xl mb-3">{f.icon}</div>
-              <div className="font-bold text-slate-800 mb-1">{f.title}</div>
-              <div className="text-sm text-slate-500">{f.desc}</div>
+            <div key={f.title} className="bg-white border border-zinc-200 rounded-lg p-5 hover:border-teal-300 transition-colors">
+              <div className="w-8 h-8 bg-teal-50 border border-teal-200 rounded-md flex items-center justify-center mb-4">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-teal-600">
+                  <circle cx="7" cy="7" r="3" fill="currentColor"/>
+                </svg>
+              </div>
+              <div className="font-semibold text-zinc-900 text-sm mb-1.5">{f.title}</div>
+              <div className="text-xs text-zinc-500 leading-relaxed">{f.desc}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Rank Levels */}
-      <div className="bg-gradient-to-r from-slate-900 to-purple-900 py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-white mb-3">Your Rank Journey</h2>
-            <p className="text-white/60">Progress from Novice to Grandmaster</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {LEVELS.map((level, i) => (
+      <div className="bg-zinc-950 py-20">
+        <div className="max-w-5xl mx-auto px-6">
+          <h2 className="text-2xl font-semibold text-white mb-2 tracking-tight">Your Rank Journey</h2>
+          <p className="text-zinc-500 text-sm mb-10">Progress from Novice to Grandmaster</p>
+          <div className="flex flex-wrap gap-3">
+            {LEVELS.map((level) => (
               <div
                 key={level.name}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur rounded-2xl px-6 py-4 border border-white/20"
+                className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 hover:border-zinc-700 transition-colors"
               >
-                <span className="text-3xl">{level.emoji}</span>
+                <span className="text-2xl">{level.emoji}</span>
                 <div>
-                  <div className="text-white font-bold">{level.name}</div>
-                  <div className="text-white/60 text-sm">{level.minXP}+ XP</div>
+                  <div className="text-white text-sm font-medium">{level.name}</div>
+                  <div className="text-zinc-500 text-xs">{level.minXP}+ XP</div>
                 </div>
               </div>
             ))}
@@ -176,42 +169,31 @@ export default function HomePage() {
       </div>
 
       {/* Chapter Overview */}
-      <div className="max-w-6xl mx-auto px-6 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-black text-slate-800 mb-3">9 Chapters of Expert Knowledge</h2>
-          <p className="text-slate-500">From basic structure to complex, production-ready prompts</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="max-w-5xl mx-auto px-6 py-20">
+        <h2 className="text-2xl font-semibold text-zinc-900 mb-2 tracking-tight">9 Chapters of Expert Knowledge</h2>
+        <p className="text-zinc-500 text-sm mb-10">From basic structure to complex, production-ready prompts</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {CHAPTERS.map((ch) => (
             <div
               key={ch.id}
-              className="relative bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              className="border border-zinc-200 rounded-lg p-4 hover:border-teal-300 hover:bg-teal-50/30 transition-all"
             >
-              <div
-                className="absolute inset-0 opacity-5"
-                style={{ backgroundColor: ch.color }}
-              />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{ch.icon}</span>
-                    <span className="text-xs font-bold text-slate-400">CH {ch.number}</span>
-                  </div>
-                  <span
-                    className="text-xs font-bold px-2 py-1 rounded-full"
-                    style={{ backgroundColor: ch.bgColor, color: ch.color }}
-                  >
-                    {ch.difficulty}
-                  </span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{ch.icon}</span>
+                  <span className="text-xs text-zinc-400 font-mono">Ch.{ch.number}</span>
                 </div>
-                <div className="font-bold text-slate-800 mb-1">{ch.title}</div>
-                <div className="text-xs text-slate-500 mb-3">{ch.subtitle}</div>
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span>{ch.exercises.length} exercises</span>
-                  <span className="text-yellow-600 font-medium">
-                    ⚡ {ch.exercises.reduce((s, ex) => s + ex.xpReward, 0) + ch.xpBonus} XP
-                  </span>
-                </div>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
+                  {ch.difficulty}
+                </span>
+              </div>
+              <div className="font-medium text-zinc-900 text-sm mb-1">{ch.title}</div>
+              <div className="text-xs text-zinc-500 mb-3">{ch.subtitle}</div>
+              <div className="flex items-center justify-between text-xs text-zinc-400">
+                <span>{ch.exercises.length} exercises</span>
+                <span className="text-teal-600 font-medium">
+                  {ch.exercises.reduce((s, ex) => s + ex.xpReward, 0) + ch.xpBonus} XP
+                </span>
               </div>
             </div>
           ))}
@@ -221,16 +203,16 @@ export default function HomePage() {
           {progress ? (
             <Link
               href="/tutorial"
-              className="inline-block px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-2xl font-bold text-lg transition-all shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-md font-medium text-sm transition-colors"
             >
-              Continue Learning →
+              Continue Learning &rarr;
             </Link>
           ) : (
             <button
               onClick={() => setShowForm(true)}
-              className="px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-2xl font-bold text-lg transition-all shadow-lg"
+              className="px-8 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-md font-medium text-sm transition-colors"
             >
-              Start Now — It's Free! 🚀
+              Start Now &mdash; It&apos;s Free
             </button>
           )}
         </div>

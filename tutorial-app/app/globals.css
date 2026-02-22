@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --teal: #0d9488;
+  --teal-light: #f0fdfa;
+  --teal-border: #99f6e4;
 }
 
 body {
@@ -12,55 +15,57 @@ body {
 
 /* Markdown/lesson content styles */
 .lesson-content h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1e293b;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #09090b;
   margin-top: 2rem;
   margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
 }
 
 .lesson-content h3 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #334155;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #18181b;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
 .lesson-content p {
-  color: #475569;
-  line-height: 1.7;
+  color: #52525b;
+  line-height: 1.75;
   margin-bottom: 1rem;
 }
 
 .lesson-content ul, .lesson-content ol {
-  color: #475569;
+  color: #52525b;
   padding-left: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .lesson-content li {
   margin-bottom: 0.375rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .lesson-content code {
-  background: #f1f5f9;
-  color: #7c3aed;
+  background: #f0fdfa;
+  color: #0d9488;
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  font-family: 'Courier New', monospace;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 0.875em;
+  border: 1px solid #99f6e4;
 }
 
 .lesson-content pre {
-  background: #0f172a;
-  color: #86efac;
-  padding: 1rem;
-  border-radius: 0.75rem;
+  background: #09090b;
+  color: #5eead4;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
   overflow-x: auto;
   margin-bottom: 1rem;
-  font-family: 'Courier New', monospace;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 0.875rem;
   line-height: 1.6;
 }
@@ -69,19 +74,20 @@ body {
   background: none;
   color: inherit;
   padding: 0;
+  border: none;
 }
 
 .lesson-content blockquote {
-  border-left: 4px solid #a855f7;
+  border-left: 3px solid #0d9488;
   padding-left: 1rem;
   margin: 1.5rem 0;
-  color: #64748b;
+  color: #71717a;
   font-style: italic;
 }
 
 .lesson-content strong {
-  color: #1e293b;
-  font-weight: 700;
+  color: #09090b;
+  font-weight: 600;
 }
 
 .lesson-content table {
@@ -92,25 +98,26 @@ body {
 }
 
 .lesson-content th {
-  background: #f1f5f9;
+  background: #f4f4f5;
   padding: 0.5rem 1rem;
   text-align: left;
-  font-weight: 700;
-  color: #374151;
-  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
 }
 
 .lesson-content td {
   padding: 0.5rem 1rem;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  color: #52525b;
+  border: 1px solid #e4e4e7;
 }
 
 .lesson-content tr:nth-child(even) td {
-  background: #f8fafc;
+  background: #fafafa;
 }
 
 .lesson-content a {
-  color: #7c3aed;
+  color: #0d9488;
   text-decoration: underline;
+  text-underline-offset: 2px;
 }

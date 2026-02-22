@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from '@/components/Navbar';
 import { ProgressProvider } from '@/components/ProgressProvider';
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "PromptCraft Academy — Interactive Prompt Engineering Tutorial",
@@ -14,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased bg-slate-50" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+    <html lang="en" className={inter.variable}>
+      <body className={`antialiased bg-white text-zinc-900 ${inter.className}`}>
         <ProgressProvider>
           <Navbar />
           <main className="pt-16">{children}</main>
