@@ -50,8 +50,8 @@ export default function HomePage() {
               <BookOpen className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 leading-tight">API Concepts</h1>
-              <p className="text-xs text-gray-500">Interactive Tutorial</p>
+              <h1 className="text-lg font-bold text-gray-900 leading-tight">Quanta</h1>
+              <p className="text-xs text-gray-500">API Concepts Tutorial</p>
             </div>
           </div>
           <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-400 hover:text-red-500 gap-1.5">

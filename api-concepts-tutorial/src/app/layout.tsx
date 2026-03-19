@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "API Concepts Interactive Tutorial",
-  description: "Learn 20 essential API concepts with interactive examples, quizzes, and AI assistance",
+  title: "Quanta — API Concepts Interactive Tutorial",
+  description: "Learn 20 essential API concepts with interactive code playgrounds, quizzes, flashcards, and AI-powered explanations.",
 };
 
 export default function RootLayout({
